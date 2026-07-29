@@ -1,11 +1,40 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Menu } from 'lucide-react';
+import { Download, Menu } from 'lucide-react';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isIOS, setIsIOS] = useState(false);
+
+  useEffect(() => {
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
+
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as BeforeInstallPromptEvent);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstall = async () => {
+    if (installPrompt) {
+      await installPrompt.prompt();
+      setInstallPrompt(null);
+      return;
+    }
+    if (isIOS) {
+      window.alert('To install BigBrain on iPhone: open this site in Safari, tap Share, choose “Add to Home Screen”, enable “Open as Web App”, then tap Add.');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -21,6 +50,16 @@ export function AppLayout() {
             <Menu className="h-5 w-5" />
           </button>
           <span className="text-lg display-heading tracking-tight text-foreground/70">BigBrain</span>
+          {(installPrompt || isIOS) && (
+            <button
+              onClick={handleInstall}
+              className="ml-auto inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              title="Install BigBrain"
+            >
+              <Download className="h-4 w-4" />
+              Install
+            </button>
+          )}
         </div>
       </header>
 

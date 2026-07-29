@@ -163,7 +163,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         {/* Main area — nav left, quote right */}
-        <div className="flex-1 flex items-center justify-center px-5 sm:px-10 overflow-y-auto">
+        <div className="flex-1 flex items-center justify-start lg:justify-center px-5 sm:px-10 overflow-y-auto">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-8 lg:gap-16 w-full max-w-4xl py-6">
             
             {/* Navigation */}

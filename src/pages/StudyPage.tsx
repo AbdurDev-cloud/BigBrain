@@ -9,6 +9,14 @@ import { Slider } from '@/components/ui/slider';
 import { Separator } from '@/components/ui/separator';
 import { useStudySessions, addStudySession, deleteStudySession } from '@/db/hooks';
 import { Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export function StudyPage() {
   const sessions = useStudySessions(20);
@@ -22,6 +30,7 @@ export function StudyPage() {
   const [practiceQuestions, setPracticeQuestions] = useState<number | ''>('');
   const [confidence, setConfidence] = useState([5]);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [deleteSessionId, setDeleteSessionId] = useState<number | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,13 +55,13 @@ export function StudyPage() {
     setConfidence([5]);
   };
 
-  const handleDeleteSession = async (sessionId: number) => {
-    const confirmed = window.confirm('Delete this study session? This cannot be undone.');
-    if (!confirmed) return;
-    await deleteStudySession(sessionId);
-    if (expandedId === sessionId) {
+  const handleDeleteSession = async () => {
+    if (deleteSessionId === null) return;
+    await deleteStudySession(deleteSessionId);
+    if (expandedId === deleteSessionId) {
       setExpandedId(null);
     }
+    setDeleteSessionId(null);
   };
 
   return (
@@ -219,7 +228,7 @@ export function StudyPage() {
                       className="h-8 w-8 text-muted-foreground hover:text-destructive"
                       onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
-                        void handleDeleteSession(session.id);
+                        setDeleteSessionId(session.id);
                       }}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -249,6 +258,19 @@ export function StudyPage() {
           </div>
         )}
       </div>
+      <Dialog open={deleteSessionId !== null} onOpenChange={(open) => !open && setDeleteSessionId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Session</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this study session? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="destructive" onClick={() => void handleDeleteSession()}>Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

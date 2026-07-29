@@ -2,8 +2,18 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { HighlightEditor } from '@/components/HighlightEditor';
-import { useJournalEntries, saveJournalEntry } from '@/db/hooks';
+import { useJournalEntries, saveJournalEntry, deleteJournalEntry } from '@/db/hooks';
 import { renderMarkdown } from '@/lib/markdown';
+import { Trash2 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export function JournalPage() {
   const entries = useJournalEntries();
@@ -14,6 +24,7 @@ export function JournalPage() {
   const [content, setContent] = useState('');
   const [isPreview, setIsPreview] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [activeEntryId, setActiveEntryId] = useState<number | null>(null);
   
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -21,9 +32,11 @@ export function JournalPage() {
   useEffect(() => {
     const entry = entries?.find(e => e.date === activeDate);
     if (entry) {
+      setActiveEntryId(entry.id);
       setTitle(entry.title);
       setContent(entry.content);
     } else {
+      setActiveEntryId(null);
       setTitle('');
       setContent('');
     }
@@ -60,6 +73,15 @@ export function JournalPage() {
 
   const handleNewEntry = () => {
     setActiveDate(today);
+    setIsPreview(false);
+  };
+
+  const handleDeleteEntry = async () => {
+    if (activeEntryId === null) return;
+    await deleteJournalEntry(activeEntryId);
+    setActiveEntryId(null);
+    setTitle('');
+    setContent('');
     setIsPreview(false);
   };
 
@@ -122,6 +144,27 @@ export function JournalPage() {
              <Button variant="ghost" size="sm" onClick={() => setIsPreview(!isPreview)}>
                {isPreview ? 'Edit' : 'Preview'}
              </Button>
+             {activeEntryId !== null && (
+               <Dialog>
+                 {/* @ts-expect-error type issue with Radix */}
+                 <DialogTrigger asChild>
+                   <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                     <Trash2 className="h-4 w-4" />
+                   </Button>
+                 </DialogTrigger>
+                 <DialogContent>
+                   <DialogHeader>
+                     <DialogTitle>Delete Journal Entry</DialogTitle>
+                     <DialogDescription>
+                       Are you sure you want to delete this journal entry? This action cannot be undone.
+                     </DialogDescription>
+                   </DialogHeader>
+                   <DialogFooter>
+                     <Button variant="destructive" onClick={() => void handleDeleteEntry()}>Delete</Button>
+                   </DialogFooter>
+                 </DialogContent>
+               </Dialog>
+             )}
           </div>
         </div>
 

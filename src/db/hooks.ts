@@ -235,6 +235,10 @@ export async function saveJournalEntry(
   } as JournalEntry);
 }
 
+export async function deleteJournalEntry(id: number) {
+  return db.journalEntries.delete(id);
+}
+
 // ---------------------------------------------------------------------------
 // CRUD — Notes
 // ---------------------------------------------------------------------------

@@ -1,5 +1,9 @@
+import { useRef, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
+  Download,
+  FolderUp,
   LayoutDashboard,
   BookOpen,
   PenLine,
@@ -9,6 +13,7 @@ import {
   TrendingUp,
   X,
 } from 'lucide-react';
+import { createBackupBlob, downloadBackup, LAST_BACKUP_KEY, restoreBackupFromFile } from '@/db/backup';
 
 interface Quote {
   text: string;
@@ -124,10 +129,51 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
   const today = new Date();
   const greeting = today.getHours() < 12 ? 'Good morning' : today.getHours() < 17 ? 'Good afternoon' : 'Good evening';
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [lastBackupAt, setLastBackupAt] = useState<string | null>(() => localStorage.getItem(LAST_BACKUP_KEY));
+  const [isWorking, setIsWorking] = useState(false);
 
   const dayOfYear = getDayOfYear(today);
   const quoteIndex = Math.abs(dayOfYear - 1) % MOTIVATIONAL_QUOTES.length;
   const quote = MOTIVATIONAL_QUOTES[quoteIndex];
+
+  const handleExport = async () => {
+    try {
+      setIsWorking(true);
+      const blob = await createBackupBlob();
+      const now = new Date().toISOString();
+      setLastBackupAt(now);
+      downloadBackup(blob);
+    } finally {
+      setIsWorking(false);
+    }
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImportFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    const confirmed = window.confirm('Importing a backup will replace all current data on this device. Continue?');
+    if (!confirmed) return;
+
+    try {
+      setIsWorking(true);
+      await restoreBackupFromFile(file);
+      const restoredAt = localStorage.getItem(LAST_BACKUP_KEY);
+      setLastBackupAt(restoredAt);
+      window.alert('Backup restored successfully.');
+      window.location.reload();
+    } catch {
+      window.alert('That backup file could not be restored.');
+    } finally {
+      setIsWorking(false);
+    }
+  };
 
   return (
     <div
@@ -240,7 +286,51 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-5 sm:px-10 py-5 sm:py-6">
+        <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-4">
+          <div className="rounded-2xl border border-border/60 bg-background/55 p-4 sm:p-5">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Backup & Restore</p>
+                <p className="text-xs text-muted-foreground">Keep one backup file in Drive, Files, or your laptop.</p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <button
+                onClick={handleExport}
+                disabled={isWorking}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60"
+              >
+                <Download className="h-4 w-4" />
+                Export Backup
+              </button>
+              <button
+                onClick={handleImportClick}
+                disabled={isWorking}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60"
+              >
+                <FolderUp className="h-4 w-4" />
+                Import Backup
+              </button>
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground/80 font-mono">
+              {lastBackupAt
+                ? `Last backup: ${new Date(lastBackupAt).toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })}`
+                : 'No backup exported yet'}
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={handleImportFile}
+            />
+          </div>
           <p className="text-xs text-muted-foreground/40 font-mono">
             Everything stored locally in your browser
           </p>

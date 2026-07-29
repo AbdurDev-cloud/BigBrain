@@ -9,15 +9,6 @@ import { Slider } from '@/components/ui/slider';
 import { Separator } from '@/components/ui/separator';
 import { useStudySessions, addStudySession, deleteStudySession } from '@/db/hooks';
 import { Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 export function StudyPage() {
   const sessions = useStudySessions(20);
@@ -53,6 +44,15 @@ export function StudyPage() {
     setNotUnderstood('');
     setPracticeQuestions('');
     setConfidence([5]);
+  };
+
+  const handleDeleteSession = async (sessionId: number) => {
+    const confirmed = window.confirm('Delete this study session? This cannot be undone.');
+    if (!confirmed) return;
+    await deleteStudySession(sessionId);
+    if (expandedId === sessionId) {
+      setExpandedId(null);
+    }
   };
 
   return (
@@ -213,25 +213,17 @@ export function StudyPage() {
                         : <ChevronDown className="h-5 w-5 text-muted-foreground" />
                     )}
 
-                    <Dialog>
-                      {/* @ts-expect-error type issue with Radix */}
-                      <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Delete Session</DialogTitle>
-                          <DialogDescription>
-                            Are you sure you want to delete this session? This action cannot be undone.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                          <Button variant="destructive" onClick={() => deleteStudySession(session.id)}>Delete</Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        void handleDeleteSession(session.id);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
                 

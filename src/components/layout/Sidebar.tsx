@@ -14,6 +14,14 @@ import {
   X,
 } from 'lucide-react';
 import { createBackupBlob, downloadBackup, LAST_BACKUP_KEY, restoreBackupFromFile } from '@/db/backup';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface Quote {
   text: string;
@@ -286,54 +294,62 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-5 sm:px-10 py-5 sm:py-6 space-y-4">
-          <div className="rounded-2xl border border-border/60 bg-background/55 p-4 sm:p-5">
-            <div className="flex items-center justify-between gap-3 mb-3">
-              <div>
-                <p className="text-sm font-medium text-foreground">Backup & Restore</p>
-                <p className="text-xs text-muted-foreground">Keep one backup file in Drive, Files, or your laptop.</p>
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <button
-                onClick={handleExport}
-                disabled={isWorking}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60"
-              >
-                <Download className="h-4 w-4" />
-                Export Backup
-              </button>
-              <button
-                onClick={handleImportClick}
-                disabled={isWorking}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60"
-              >
-                <FolderUp className="h-4 w-4" />
-                Import Backup
-              </button>
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground/80 font-mono">
-              {lastBackupAt
-                ? `Last backup: ${new Date(lastBackupAt).toLocaleString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit',
-                  })}`
-                : 'No backup exported yet'}
-            </p>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="application/json,.json"
-              className="hidden"
-              onChange={handleImportFile}
-            />
-          </div>
+        <div className="px-5 sm:px-10 py-5 sm:py-6 flex items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground/40 font-mono">
             Everything stored locally in your browser
           </p>
+          <Dialog>
+            <DialogTrigger
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            >
+              <FolderUp className="h-4 w-4" />
+              Backup & Restore
+            </DialogTrigger>
+            <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Backup & Restore</DialogTitle>
+                <DialogDescription>
+                  Export one backup file and keep it in Drive, Files, or your laptop.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-3">
+                <button
+                  onClick={handleExport}
+                  disabled={isWorking}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60"
+                >
+                  <Download className="h-4 w-4" />
+                  Export Backup
+                </button>
+                <button
+                  onClick={handleImportClick}
+                  disabled={isWorking}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-border px-4 py-3 text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60"
+                >
+                  <FolderUp className="h-4 w-4" />
+                  Import Backup
+                </button>
+                <p className="text-xs text-muted-foreground/80 font-mono">
+                  {lastBackupAt
+                    ? `Last backup: ${new Date(lastBackupAt).toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}`
+                    : 'No backup exported yet'}
+                </p>
+              </div>
+            </DialogContent>
+          </Dialog>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={handleImportFile}
+          />
         </div>
       </div>
     </div>

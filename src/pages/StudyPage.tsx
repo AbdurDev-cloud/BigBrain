@@ -7,8 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Separator } from '@/components/ui/separator';
-import { useStudySessions, addStudySession, deleteStudySession } from '@/db/hooks';
-import { Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { useStudySessions, addStudySession, updateStudySession, deleteStudySession } from '@/db/hooks';
+import { Trash2, Edit2, ChevronDown, ChevronUp } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -17,6 +17,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+interface SessionEditValues {
+  date: string;
+  subject: string;
+  topic: string;
+  timeSpent: number | '';
+  practiceQuestions: number | '';
+  confidence: number;
+  understood: string;
+  notUnderstood: string;
+}
 
 export function StudyPage() {
   const sessions = useStudySessions(20);
@@ -31,6 +42,8 @@ export function StudyPage() {
   const [confidence, setConfidence] = useState([5]);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [deleteSessionId, setDeleteSessionId] = useState<number | null>(null);
+  const [editingSessionId, setEditingSessionId] = useState<number | null>(null);
+  const [editValues, setEditValues] = useState<SessionEditValues | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +75,42 @@ export function StudyPage() {
       setExpandedId(null);
     }
     setDeleteSessionId(null);
+  };
+
+  const startEditingSession = (session: NonNullable<typeof sessions>[number]) => {
+    setEditingSessionId(session.id);
+    setExpandedId(session.id);
+    setEditValues({
+      date: session.date,
+      subject: session.subject,
+      topic: session.topic,
+      timeSpent: session.timeSpent,
+      practiceQuestions: session.practiceQuestions,
+      confidence: session.confidence,
+      understood: session.understood,
+      notUnderstood: session.notUnderstood,
+    });
+  };
+
+  const cancelEditingSession = () => {
+    setEditingSessionId(null);
+    setEditValues(null);
+  };
+
+  const saveEditedSession = async () => {
+    if (editingSessionId === null || !editValues || !editValues.subject || !editValues.topic || !editValues.timeSpent) return;
+
+    await updateStudySession(editingSessionId, {
+      date: editValues.date,
+      subject: editValues.subject,
+      topic: editValues.topic,
+      timeSpent: Number(editValues.timeSpent),
+      practiceQuestions: Number(editValues.practiceQuestions) || 0,
+      confidence: editValues.confidence,
+      understood: editValues.understood,
+      notUnderstood: editValues.notUnderstood,
+    });
+    cancelEditingSession();
   };
 
   return (
@@ -233,11 +282,72 @@ export function StudyPage() {
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      title="Edit session"
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        startEditingSession(session);
+                      }}
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
                 
                 {/* Expanded content */}
-                {expandedId === session.id && (session.understood || session.notUnderstood) && (
+                {expandedId === session.id && editingSessionId === session.id && editValues && (
+                  <div className="px-4 sm:px-6 pb-6 pt-5 border-t space-y-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Edit Session</span>
+                      <div className="flex gap-2">
+                        <Button type="button" variant="ghost" size="sm" onClick={cancelEditingSession}>Cancel</Button>
+                        <Button type="button" size="sm" onClick={() => void saveEditedSession()}>Save Changes</Button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                      <div className="space-y-2">
+                        <Label>Date</Label>
+                        <Input type="date" value={editValues.date} onChange={e => setEditValues({ ...editValues, date: e.target.value })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Subject</Label>
+                        <Input value={editValues.subject} onChange={e => setEditValues({ ...editValues, subject: e.target.value })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Topic</Label>
+                        <Input value={editValues.topic} onChange={e => setEditValues({ ...editValues, topic: e.target.value })} />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-2">
+                          <Label>Minutes</Label>
+                          <Input type="number" min="1" value={editValues.timeSpent} onChange={e => setEditValues({ ...editValues, timeSpent: e.target.value ? Number(e.target.value) : '' })} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Questions</Label>
+                          <Input type="number" min="0" value={editValues.practiceQuestions} onChange={e => setEditValues({ ...editValues, practiceQuestions: e.target.value ? Number(e.target.value) : '' })} />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div className="space-y-2">
+                        <Label>What I understood</Label>
+                        <Textarea className="min-h-32" value={editValues.understood} onChange={e => setEditValues({ ...editValues, understood: e.target.value })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>What I didn&apos;t understand</Label>
+                        <Textarea className="min-h-32" value={editValues.notUnderstood} onChange={e => setEditValues({ ...editValues, notUnderstood: e.target.value })} />
+                      </div>
+                    </div>
+                    <div className="max-w-md space-y-2">
+                      <div className="flex justify-between"><Label>Confidence</Label><span className="text-sm font-medium">{editValues.confidence}/10</span></div>
+                      <Slider value={[editValues.confidence]} onValueChange={value => setEditValues({ ...editValues, confidence: Array.isArray(value) ? value[0] : Number(value) })} min={1} max={10} step={1} />
+                    </div>
+                  </div>
+                )}
+                {expandedId === session.id && editingSessionId !== session.id && (session.understood || session.notUnderstood) && (
                   <div className="px-6 pb-6 pt-2 border-t space-y-6">
                     {session.understood && (
                       <div>

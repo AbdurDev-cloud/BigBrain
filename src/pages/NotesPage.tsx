@@ -139,9 +139,9 @@ export function NotesPage() {
         </div>
 
         {/* Notes List */}
-        <div className="flex-1 flex flex-col min-h-0 max-h-48 lg:max-h-none">
+        <div className="flex flex-col min-h-0 max-h-64 lg:flex-1 lg:max-h-none">
           <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">Notes</div>
-          <ScrollArea className="flex-1">
+          <ScrollArea className="h-56 min-h-0 lg:h-auto lg:flex-1">
             <div className="space-y-1 pr-3">
               {notes?.map(note => (
                 <button

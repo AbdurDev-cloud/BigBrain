@@ -5,6 +5,7 @@ import { HighlightEditor } from '@/components/HighlightEditor';
 import { useJournalEntries, saveJournalEntry, deleteJournalEntry } from '@/db/hooks';
 import { renderMarkdown } from '@/lib/markdown';
 import { Trash2 } from 'lucide-react';
+import { MenuBackButton } from '@/components/layout/PageHeader';
 import {
   Dialog,
   DialogContent,
@@ -98,6 +99,7 @@ export function JournalPage() {
       {/* Left Panel: Entry List */}
       <div className="w-full lg:w-64 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r pb-4 lg:pb-0 lg:pr-4">
         <div className="mb-6 flex justify-between items-center">
+          <MenuBackButton />
           <h2 className="text-xl font-semibold">Journal</h2>
           <Button variant="outline" size="sm" onClick={handleNewEntry}>
             Today

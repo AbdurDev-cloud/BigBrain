@@ -5,6 +5,7 @@ import { HighlightEditor } from '@/components/HighlightEditor';
 import { useNotes, useNoteCategories, addNote, updateNote, deleteNote } from '@/db/hooks';
 import { renderMarkdown } from '@/lib/markdown';
 import { Trash2, Plus } from 'lucide-react';
+import { MenuBackButton } from '@/components/layout/PageHeader';
 import {
   Dialog,
   DialogContent,
@@ -114,7 +115,7 @@ export function NotesPage() {
 
         {/* Categories */}
         <div className="mb-6">
-          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-2">Categories</div>
+          <div className="mb-4 flex items-center gap-3"><MenuBackButton /><div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Categories</div></div>
           <div className="space-y-1">
             <button
               onClick={() => setActiveCategory('All')}

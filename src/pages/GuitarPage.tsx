@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { MenuBackButton } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
 import { useGuitarProgress, saveGuitarProgress, toggleGuitarItem, resetGuitarProgress } from '@/db/hooks';
 import type { GuitarLevel } from '@/db/database';
@@ -287,7 +288,7 @@ function LevelSelection({ onBack }: { onBack: () => void }) {
   return (
     <div className="max-w-3xl mx-auto pb-20">
       <div className="flex items-center gap-4 mb-10">
-        <button type="button" onClick={onBack} aria-label="Open menu" className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="h-6 w-6" strokeWidth={2} /></button>
+        <div onClick={onBack}><MenuBackButton /></div>
         <div>
           <h1 className="text-3xl sm:text-4xl display-heading tracking-tight">Where are you starting?</h1>
           <p className="text-sm text-muted-foreground mt-1 font-mono opacity-60">Choose your place on the learning timeline</p>

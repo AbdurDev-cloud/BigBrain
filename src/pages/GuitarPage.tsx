@@ -131,16 +131,19 @@ export function GuitarPage() {
         }
       />
 
-      {/* Progress bar */}
-      <div className="mb-10">
-        <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-700 ease-out"
-            style={{
-              width: `${progressPercent}%`,
-              background: 'linear-gradient(90deg, oklch(0.75 0.08 65), oklch(0.65 0.10 45))',
-            }}
-          />
+      {/* Editorial-style progress slider */}
+      <div className="mb-10 space-y-3">
+        <div className="flex items-center gap-3 text-[11px] font-mono tracking-widest text-muted-foreground/60">
+          <span>{String(completedCount).padStart(2, '0')}</span>
+          <div className="relative flex-1 h-2">
+            <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-muted-foreground/20" />
+            <div className="absolute left-0 top-1/2 h-[2px] -translate-y-1/2 rounded-full bg-warm transition-[width] duration-700 ease-out" style={{ width: `${progressPercent}%` }} />
+            <div className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background bg-warm shadow-sm transition-[left] duration-700 ease-out" style={{ left: `${Math.max(progressPercent, 1)}%` }} />
+            <div className="absolute inset-0 flex justify-between pointer-events-none">
+              {activeStages.map((_, index) => <span key={index} className="h-2 w-px bg-muted-foreground/20" />)}
+            </div>
+          </div>
+          <span>{String(totalItems).padStart(2, '0')}</span>
         </div>
       </div>
 
@@ -205,6 +208,9 @@ export function GuitarPage() {
                   </div>
                   <div className="text-xs text-muted-foreground/50 font-mono mt-0.5">
                     {stageCompleted}/{stageTotal}
+                  </div>
+                  <div className="mt-2 h-px max-w-40 bg-muted-foreground/10">
+                    <div className="h-full bg-warm/70 transition-[width] duration-500" style={{ width: `${(stageCompleted / stageTotal) * 100}%` }} />
                   </div>
                 </div>
 

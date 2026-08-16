@@ -11,6 +11,7 @@ import {
   FolderKanban,
   Heart,
   TrendingUp,
+  Guitar,
   X,
 } from 'lucide-react';
 import { createBackupBlob, downloadBackup, LAST_BACKUP_KEY, restoreBackupFromFile } from '@/db/backup';
@@ -119,6 +120,7 @@ const navigation = [
   { name: 'Projects', href: '/projects', icon: FolderKanban },
   { name: 'Health', href: '/health', icon: Heart },
   { name: 'Progress', href: '/progress', icon: TrendingUp },
+  { name: 'Learn Guitar', href: '/guitar', icon: Guitar },
 ];
 
 interface SidebarProps {

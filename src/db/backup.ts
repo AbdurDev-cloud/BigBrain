@@ -6,6 +6,7 @@ import type {
   Note,
   Project,
   StudySession,
+  GuitarProgress,
 } from './database';
 
 const BACKUP_VERSION = 1;
@@ -21,6 +22,7 @@ interface BigBrainBackup {
     projects: Project[];
     healthLogs: HealthLog[];
     habits: HabitRecord[];
+    guitarProgress: GuitarProgress[];
   };
 }
 
@@ -46,6 +48,7 @@ export async function createBackupBlob() {
       projects: await db.projects.toArray(),
       healthLogs: await db.healthLogs.toArray(),
       habits: await db.habits.toArray(),
+      guitarProgress: await db.guitarProgress.toArray(),
     },
   };
 
@@ -77,10 +80,11 @@ export async function restoreBackupFromFile(file: File) {
   const projects = reviveDates(parsed.data.projects || [], ['createdAt', 'updatedAt']);
   const healthLogs = reviveDates(parsed.data.healthLogs || [], ['createdAt']);
   const habits = parsed.data.habits || [];
+  const guitarProgress = reviveDates(parsed.data.guitarProgress || [], ['createdAt', 'updatedAt']);
 
   await db.transaction(
     'rw',
-    [db.studySessions, db.journalEntries, db.notes, db.projects, db.healthLogs, db.habits],
+    [db.studySessions, db.journalEntries, db.notes, db.projects, db.healthLogs, db.habits, db.guitarProgress],
     async () => {
       await db.studySessions.clear();
       await db.journalEntries.clear();
@@ -95,6 +99,7 @@ export async function restoreBackupFromFile(file: File) {
       if (projects.length) await db.projects.bulkAdd(projects as Project[]);
       if (healthLogs.length) await db.healthLogs.bulkAdd(healthLogs as HealthLog[]);
       if (habits.length) await db.habits.bulkAdd(habits as HabitRecord[]);
+      if (guitarProgress.length) await db.guitarProgress.bulkAdd(guitarProgress as GuitarProgress[]);
     },
   );
 

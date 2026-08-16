@@ -75,6 +75,16 @@ export interface HabitRecord {
   habits: Record<string, boolean>;
 }
 
+export type GuitarLevel = 'beginner' | 'basics' | 'advanced';
+
+export interface GuitarProgress {
+  id: number;
+  level: GuitarLevel;
+  completedItems: Record<string, boolean>; // key: "stageIndex-itemIndex"
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // ---------------------------------------------------------------------------
 // Database
 // ---------------------------------------------------------------------------
@@ -86,6 +96,7 @@ const db = new Dexie("BigBrainDB") as Dexie & {
   projects: EntityTable<Project, "id">;
   healthLogs: EntityTable<HealthLog, "id">;
   habits: EntityTable<HabitRecord, "id">;
+  guitarProgress: EntityTable<GuitarProgress, "id">;
 };
 
 db.version(1).stores({
@@ -95,6 +106,16 @@ db.version(1).stores({
   projects: "++id, status",
   healthLogs: "++id, &date",
   habits: "++id, &date",
+});
+
+db.version(2).stores({
+  studySessions: "++id, date, subject",
+  journalEntries: "++id, &date",
+  notes: "++id, category",
+  projects: "++id, status",
+  healthLogs: "++id, &date",
+  habits: "++id, &date",
+  guitarProgress: "++id",
 });
 
 export { db };

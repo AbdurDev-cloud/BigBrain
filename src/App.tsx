@@ -8,6 +8,7 @@ import { NotesPage } from '@/pages/NotesPage';
 import { ProjectsPage } from '@/pages/ProjectsPage';
 import { HealthPage } from '@/pages/HealthPage';
 import { ProgressPage } from '@/pages/ProgressPage';
+import { GuitarPage } from '@/pages/GuitarPage';
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
             <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/health" element={<HealthPage />} />
             <Route path="/progress" element={<ProgressPage />} />
+            <Route path="/guitar" element={<GuitarPage />} />
           </Route>
         </Routes>
       </TooltipProvider>

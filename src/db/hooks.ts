@@ -7,6 +7,8 @@ import type {
   Project,
   HealthLog,
   HabitRecord,
+  GuitarProgress,
+  GuitarLevel,
 } from "./database";
 
 // ---------------------------------------------------------------------------
@@ -326,4 +328,54 @@ export async function saveHabits(
   }
 
   return db.habits.add({ date, habits } as HabitRecord);
+}
+
+// ---------------------------------------------------------------------------
+// Guitar Progress
+// ---------------------------------------------------------------------------
+
+export function useGuitarProgress() {
+  return useLiveQuery(async () => {
+    const record = await db.guitarProgress.toCollection().first();
+    return record ?? null; // null = no record, undefined = still loading
+  });
+}
+
+export async function saveGuitarProgress(
+  level: GuitarLevel,
+  completedItems: Record<string, boolean> = {},
+) {
+  const existing = await db.guitarProgress.toCollection().first();
+
+  if (existing) {
+    return db.guitarProgress.update(existing.id, {
+      level,
+      completedItems,
+      updatedAt: new Date(),
+    });
+  }
+
+  return db.guitarProgress.add({
+    level,
+    completedItems,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  } as GuitarProgress);
+}
+
+export async function toggleGuitarItem(itemKey: string) {
+  const existing = await db.guitarProgress.toCollection().first();
+  if (!existing) return;
+
+  const updated = { ...existing.completedItems };
+  updated[itemKey] = !updated[itemKey];
+
+  return db.guitarProgress.update(existing.id, {
+    completedItems: updated,
+    updatedAt: new Date(),
+  });
+}
+
+export async function resetGuitarProgress() {
+  return db.guitarProgress.clear();
 }

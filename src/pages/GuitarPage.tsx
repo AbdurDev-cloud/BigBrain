@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { useGuitarProgress, saveGuitarProgress, toggleGuitarItem, resetGuitarProgress } from '@/db/hooks';
 import type { GuitarLevel } from '@/db/database';
 import { ArrowLeft, Check, ChevronDown, RotateCcw } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 // ---------------------------------------------------------------------------
 // Static progression data — never stored in DB
@@ -71,7 +70,6 @@ const LEVEL_OPTIONS: { level: GuitarLevel; label: string; description: string }[
 
 export function GuitarPage() {
   const progress = useGuitarProgress();
-  const navigate = useNavigate();
   const [expandedStage, setExpandedStage] = useState<number | null>(null);
 
   // Loading state
@@ -87,7 +85,7 @@ export function GuitarPage() {
   // Level selection (first visit)
   // ---------------------------------------------------------------------------
   if (progress === null) {
-    return <LevelSelection onBack={() => navigate('/')} />;
+    return <LevelSelection onBack={() => window.dispatchEvent(new Event('bigbrain:open-menu'))} />;
   }
 
   // ---------------------------------------------------------------------------
@@ -233,7 +231,8 @@ export function GuitarPage() {
                         key={itemKey}
                         type="button"
                         onClick={() => handleToggle(itemKey)}
-                        className="flex items-center gap-3 w-full text-left py-2.5 px-3 rounded-lg hover:bg-muted/30 transition-colors group/item cursor-pointer"
+                        className="guitar-checklist-item flex items-center gap-3 w-full text-left py-2.5 px-3 rounded-lg hover:bg-muted/30 transition-colors group/item cursor-pointer"
+                        style={{ animationDelay: `${ii * 55}ms` }}
                       >
                         {/* Mini timeline node */}
                         <div
@@ -308,11 +307,12 @@ function LevelSelection({ onBack }: { onBack: () => void }) {
               type="button"
               onClick={() => handleSelect(opt.level)}
               disabled={isAnimating}
-              className={`text-left p-6 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
+              className={`guitar-level-option text-left p-6 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
                 selected === opt.level
                   ? 'border-warm bg-warm/10 scale-[1.02] shadow-md'
                   : 'border-border hover:border-warm/40 hover:bg-muted/30'
               } ${isAnimating && selected !== opt.level ? 'opacity-40 scale-[0.98]' : ''}`}
+              style={{ animationDelay: `${LEVEL_OPTIONS.indexOf(opt) * 90}ms` }}
             >
               <div className="text-base font-medium text-foreground">{opt.label}</div>
               <div className="text-sm text-muted-foreground mt-1">{opt.description}</div>

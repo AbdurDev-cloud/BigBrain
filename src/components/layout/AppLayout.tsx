@@ -22,7 +22,12 @@ export function AppLayout() {
       setInstallPrompt(event as BeforeInstallPromptEvent);
     };
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    const openSidebar = () => setSidebarOpen(true);
+    window.addEventListener('bigbrain:open-menu', openSidebar);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('bigbrain:open-menu', openSidebar);
+    };
   }, []);
 
   const handleInstall = async () => {
@@ -65,7 +70,7 @@ export function AppLayout() {
 
       <main>
         <ScrollArea className="h-[calc(100vh-3.5rem)]">
-          <div className="w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 py-6 sm:py-8 lg:py-10">
+          <div className="page-transition w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 py-6 sm:py-8 lg:py-10">
             <Outlet />
           </div>
         </ScrollArea>

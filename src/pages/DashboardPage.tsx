@@ -31,6 +31,7 @@ export function DashboardPage() {
     { key: 'noWeed', label: 'No Weed', color: 'violet', emoji: '🧘', glowLight: 'rgba(167,139,250,0.4)', glowDark: 'rgba(139,92,246,0.2)', glowBorder: 'rgba(139,92,246,0.5)', glowShadow: 'rgba(139,92,246,0.25)' },
     { key: 'read', label: 'Read', color: 'amber', emoji: '📚', glowLight: 'rgba(251,191,36,0.4)', glowDark: 'rgba(245,158,11,0.2)', glowBorder: 'rgba(245,158,11,0.5)', glowShadow: 'rgba(245,158,11,0.25)' },
     { key: 'code', label: 'Code', color: 'indigo', emoji: '💻', glowLight: 'rgba(129,140,248,0.4)', glowDark: 'rgba(99,102,241,0.2)', glowBorder: 'rgba(99,102,241,0.5)', glowShadow: 'rgba(99,102,241,0.25)' },
+    { key: 'guitar', label: 'Guitar', color: 'amber', emoji: '🎸', glowLight: 'rgba(217,164,109,0.45)', glowDark: 'rgba(180,120,60,0.2)', glowBorder: 'rgba(190,130,70,0.55)', glowShadow: 'rgba(180,120,60,0.25)' },
   ];
 
   const handleHabitToggle = (key: string, checked: boolean) => {

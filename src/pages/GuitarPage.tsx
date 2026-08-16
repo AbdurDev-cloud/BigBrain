@@ -59,10 +59,10 @@ const LEVEL_START_INDEX: Record<GuitarLevel, number> = {
   advanced: 6,
 };
 
-const LEVEL_OPTIONS: { level: GuitarLevel; label: string; description: string }[] = [
-  { level: 'beginner', label: "I'm starting from zero", description: 'Full journey from stage 1' },
-  { level: 'basics', label: 'I know the basics', description: 'Start from chord changes' },
-  { level: 'advanced', label: 'I want to get better', description: 'Jump to songs & beyond' },
+const LEVEL_OPTIONS: { level: GuitarLevel; label: string }[] = [
+  { level: 'beginner', label: "I'm starting from zero" },
+  { level: 'basics', label: 'I know the basics' },
+  { level: 'advanced', label: 'I want to get better' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -296,7 +296,6 @@ function LevelSelection({ onBack }: { onBack: () => void }) {
         <div onClick={onBack}><MenuBackButton /></div>
         <div>
           <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-foreground/80">Where are you starting?</h1>
-          <p className="text-sm text-muted-foreground mt-1 font-mono opacity-60">Choose your place on the learning timeline</p>
         </div>
       </div>
 
@@ -317,7 +316,7 @@ function LevelSelection({ onBack }: { onBack: () => void }) {
               <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 font-mono text-sm font-bold transition-colors ${selected === opt.level ? 'border-warm bg-warm text-white' : 'border-muted-foreground/25 group-hover:border-warm/60'}`}>
                 {String(LEVEL_OPTIONS.indexOf(opt) + 1).padStart(2, '0')}
               </span>
-              <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">{opt.label}</span><span className="mt-1 block text-sm sm:text-base text-muted-foreground opacity-75">{opt.description}</span></span>
+              <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">{opt.label}</span></span>
               <span className="text-2xl text-muted-foreground/40 transition-transform group-hover:translate-x-1">→</span>
             </button>
           ))}

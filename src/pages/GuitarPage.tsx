@@ -156,7 +156,7 @@ export function GuitarPage() {
           const isLast = si === activeStages.length - 1;
 
           return (
-            <div key={stageIndex} className="relative">
+            <div key={stageIndex} className="guitar-stage-enter relative" style={{ animationDelay: `${si * 55}ms` }}>
               {/* Vertical connecting line */}
               {!isLast && (
                 <div

@@ -13,10 +13,11 @@
 }
 
 .page-transition { animation: bigbrain-page-enter 380ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.guitar-stage-enter { animation: bigbrain-item-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 .guitar-checklist-item, .guitar-level-option { animation: bigbrain-item-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both; }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-transition, .guitar-checklist-item, .guitar-level-option { animation: none; }
+  .page-transition, .guitar-stage-enter, .guitar-checklist-item, .guitar-level-option { animation: none; }
 }
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";

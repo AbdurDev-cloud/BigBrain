@@ -4,7 +4,7 @@ import { MenuBackButton } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
 import { useGuitarProgress, saveGuitarProgress, toggleGuitarItem, resetGuitarProgress } from '@/db/hooks';
 import type { GuitarLevel } from '@/db/database';
-import { ArrowLeft, Check, ChevronDown, RotateCcw } from 'lucide-react';
+import { Check, ChevronDown, RotateCcw } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Static progression data — never stored in DB
@@ -290,7 +290,7 @@ function LevelSelection({ onBack }: { onBack: () => void }) {
       <div className="flex items-center gap-4 mb-10">
         <div onClick={onBack}><MenuBackButton /></div>
         <div>
-          <h1 className="text-3xl sm:text-4xl display-heading tracking-tight">Where are you starting?</h1>
+          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-foreground/80">Where are you starting?</h1>
           <p className="text-sm text-muted-foreground mt-1 font-mono opacity-60">Choose your place on the learning timeline</p>
         </div>
       </div>
@@ -312,8 +312,8 @@ function LevelSelection({ onBack }: { onBack: () => void }) {
               <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 font-mono text-sm font-bold transition-colors ${selected === opt.level ? 'border-warm bg-warm text-white' : 'border-muted-foreground/25 group-hover:border-warm/60'}`}>
                 {String(LEVEL_OPTIONS.indexOf(opt) + 1).padStart(2, '0')}
               </span>
-              <span className="min-w-0 flex-1"><span className="block text-base font-medium">{opt.label}</span><span className="mt-1 block text-sm opacity-65">{opt.description}</span></span>
-              <span className="text-xl opacity-30 transition-transform group-hover:translate-x-1">→</span>
+              <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">{opt.label}</span><span className="mt-1 block text-sm sm:text-base text-muted-foreground opacity-75">{opt.description}</span></span>
+              <span className="text-2xl text-muted-foreground/40 transition-transform group-hover:translate-x-1">→</span>
             </button>
           ))}
       </div>

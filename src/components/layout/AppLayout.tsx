@@ -70,8 +70,11 @@ export function AppLayout() {
 
       <main>
         <ScrollArea className="h-[calc(100vh-3.5rem)]">
-          <div className="page-transition w-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 py-6 sm:py-8 lg:py-10">
-            <Outlet />
+          <div className="page-transition flex min-h-full w-full flex-col px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20 py-6 sm:py-8 lg:py-10">
+            <div className="flex-1"><Outlet /></div>
+            <footer className="mt-16 border-t border-border/40 pt-5 pb-2 text-center text-xs text-muted-foreground/60 font-mono">
+              © {new Date().getFullYear()} <a href="mailto:abdurebon@gmail.com" className="transition-colors hover:text-foreground">aBduR raHAMAN</a>
+            </footer>
           </div>
         </ScrollArea>
       </main>

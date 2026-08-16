@@ -317,7 +317,6 @@ function LevelSelection({ onBack }: { onBack: () => void }) {
                 {String(LEVEL_OPTIONS.indexOf(opt) + 1).padStart(2, '0')}
               </span>
               <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">{opt.label}</span></span>
-              <span className="text-2xl text-muted-foreground/40 transition-transform group-hover:translate-x-1">→</span>
             </button>
           ))}
       </div>

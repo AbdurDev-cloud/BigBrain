@@ -3,7 +3,8 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
 import { useGuitarProgress, saveGuitarProgress, toggleGuitarItem, resetGuitarProgress } from '@/db/hooks';
 import type { GuitarLevel } from '@/db/database';
-import { Check, ChevronDown, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Check, ChevronDown, RotateCcw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // ---------------------------------------------------------------------------
 // Static progression data — never stored in DB
@@ -70,6 +71,7 @@ const LEVEL_OPTIONS: { level: GuitarLevel; label: string; description: string }[
 
 export function GuitarPage() {
   const progress = useGuitarProgress();
+  const navigate = useNavigate();
   const [expandedStage, setExpandedStage] = useState<number | null>(null);
 
   // Loading state
@@ -85,7 +87,7 @@ export function GuitarPage() {
   // Level selection (first visit)
   // ---------------------------------------------------------------------------
   if (progress === null) {
-    return <LevelSelection />;
+    return <LevelSelection onBack={() => navigate('/')} />;
   }
 
   // ---------------------------------------------------------------------------
@@ -269,7 +271,7 @@ export function GuitarPage() {
 // Level Selection Screen
 // ---------------------------------------------------------------------------
 
-function LevelSelection() {
+function LevelSelection({ onBack }: { onBack: () => void }) {
   const [selected, setSelected] = useState<GuitarLevel | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -286,8 +288,10 @@ function LevelSelection() {
   return (
     <div className="max-w-2xl mx-auto pb-20">
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-10">
+        <button type="button" onClick={onBack} aria-label="Back to dashboard" className="self-start inline-flex h-12 w-12 items-center justify-center rounded-full border border-warm/30 bg-warm/10 text-warm-foreground shadow-sm transition-all hover:-translate-x-0.5 hover:bg-warm/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warm"><ArrowLeft className="h-6 w-6" strokeWidth={2.2} /></button>
         {/* Title */}
-        <div className="text-center space-y-3">
+        <div className="w-full rounded-3xl border border-warm/25 bg-warm/5 px-6 py-8 text-center shadow-sm sm:px-10">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-warm text-white shadow-md"><span className="font-mono text-lg font-bold">01</span></div>
           <h1 className="text-3xl sm:text-4xl display-heading tracking-tight">
             Where are you starting?
           </h1>

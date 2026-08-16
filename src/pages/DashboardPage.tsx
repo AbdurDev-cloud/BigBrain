@@ -50,7 +50,7 @@ export function DashboardPage() {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <PageHeader title={greeting} description={displayDate} />
+      <PageHeader title={greeting} description={displayDate} showBack={false} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         

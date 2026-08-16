@@ -285,41 +285,37 @@ function LevelSelection({ onBack }: { onBack: () => void }) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto pb-20">
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-10">
-        <button type="button" onClick={onBack} aria-label="Back to dashboard" className="self-start inline-flex h-12 w-12 items-center justify-center rounded-full border border-warm/30 bg-warm/10 text-warm-foreground shadow-sm transition-all hover:-translate-x-0.5 hover:bg-warm/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warm"><ArrowLeft className="h-6 w-6" strokeWidth={2.2} /></button>
-        {/* Title */}
-        <div className="w-full rounded-3xl border border-warm/25 bg-warm/5 px-6 py-8 text-center shadow-sm sm:px-10">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-warm text-white shadow-md"><span className="font-mono text-lg font-bold">01</span></div>
-          <h1 className="text-3xl sm:text-4xl display-heading tracking-tight">
-            Where are you starting?
-          </h1>
-          <p className="text-base text-muted-foreground font-sans">
-            This sets your starting point on the timeline
-          </p>
+    <div className="max-w-3xl mx-auto pb-20">
+      <div className="flex items-center gap-4 mb-10">
+        <button type="button" onClick={onBack} aria-label="Open menu" className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"><ArrowLeft className="h-6 w-6" strokeWidth={2} /></button>
+        <div>
+          <h1 className="text-3xl sm:text-4xl display-heading tracking-tight">Where are you starting?</h1>
+          <p className="text-sm text-muted-foreground mt-1 font-mono opacity-60">Choose your place on the learning timeline</p>
         </div>
+      </div>
 
-        {/* Options */}
-        <div className="grid gap-4 w-full max-w-md">
+      <div className="space-y-2">
           {LEVEL_OPTIONS.map((opt) => (
             <button
               key={opt.level}
               type="button"
               onClick={() => handleSelect(opt.level)}
               disabled={isAnimating}
-              className={`guitar-level-option text-left p-6 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
+              className={`guitar-level-option group flex w-full items-center gap-5 rounded-2xl px-5 py-5 text-left transition-all duration-300 cursor-pointer ${
                 selected === opt.level
-                  ? 'border-warm bg-warm/10 scale-[1.02] shadow-md'
-                  : 'border-border hover:border-warm/40 hover:bg-muted/30'
+                  ? 'bg-warm/10 text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
               } ${isAnimating && selected !== opt.level ? 'opacity-40 scale-[0.98]' : ''}`}
               style={{ animationDelay: `${LEVEL_OPTIONS.indexOf(opt) * 90}ms` }}
             >
-              <div className="text-base font-medium text-foreground">{opt.label}</div>
-              <div className="text-sm text-muted-foreground mt-1">{opt.description}</div>
+              <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 font-mono text-sm font-bold transition-colors ${selected === opt.level ? 'border-warm bg-warm text-white' : 'border-muted-foreground/25 group-hover:border-warm/60'}`}>
+                {String(LEVEL_OPTIONS.indexOf(opt) + 1).padStart(2, '0')}
+              </span>
+              <span className="min-w-0 flex-1"><span className="block text-base font-medium">{opt.label}</span><span className="mt-1 block text-sm opacity-65">{opt.description}</span></span>
+              <span className="text-xl opacity-30 transition-transform group-hover:translate-x-1">→</span>
             </button>
           ))}
-        </div>
       </div>
-    </div>
+      </div>
   );
 }

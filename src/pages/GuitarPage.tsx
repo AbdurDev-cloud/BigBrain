@@ -296,8 +296,8 @@ export function GuitarPage() {
 
       <section className="mt-14 border-t border-border/50 pt-8">
         <div className="mb-5">
-          <h2 className="text-xl font-medium tracking-tight">My Guitar Log</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Keep a simple record of what you learned today.</p>
+          <h2 className="text-xl font-medium tracking-tight">My Music Log</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Keep a simple record of what you practiced or learned.</p>
         </div>
         <div className="flex gap-2">
           <input value={logText} onChange={(event) => setLogText(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void handleAddLog(); }} placeholder="What did you practice or learn?" className="min-w-0 flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-warm" />

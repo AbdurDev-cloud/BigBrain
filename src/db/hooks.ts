@@ -382,7 +382,7 @@ export async function resetGuitarProgress() {
 }
 
 export function useGuitarLogs() {
-  return useLiveQuery(() => db.guitarLogs.orderBy('createdAt').reverse().toArray());
+  return useLiveQuery(() => db.guitarLogs.orderBy('id').reverse().toArray());
 }
 
 export async function addGuitarLog(text: string) {

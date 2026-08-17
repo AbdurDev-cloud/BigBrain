@@ -380,5 +380,5 @@ function MusicLog() {
 }
 
 function MusicLogPage({ onBack }: { onBack: () => void }) {
-  return <div className="max-w-3xl mx-auto pb-20"><PageHeader title="My Music Log" description="Keep track of anything you do, discover, create, or explore in music." action={<Button variant="ghost" size="sm" onClick={onBack}>← Back</Button>} /><MusicLog /></div>;
+  return <div className="page-transition max-w-3xl mx-auto pb-20"><PageHeader title="My Music Log" description="Keep track of anything you do, discover, create, or explore in music." action={<Button variant="ghost" size="sm" onClick={onBack}>← Back</Button>} /><MusicLog /></div>;
 }

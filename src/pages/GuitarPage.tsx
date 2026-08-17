@@ -162,7 +162,7 @@ export function GuitarPage() {
               const stageIndex = index + startIndex;
               const done = stage.items.filter((_, ii) => completed[`${stageIndex}-${ii}`]).length;
               const fill = done === stage.items.length ? 'bg-warm' : index === currentStageRelative ? 'bg-warm/70' : 'bg-muted-foreground/20';
-              return <span key={stageIndex} className={`h-[3px] flex-1 rounded-full transition-colors duration-500 ${fill}`} />;
+              return <span key={stageIndex} style={{ transform: 'skewX(-7deg)' }} className={`h-[3px] flex-1 rounded-full transition-colors duration-500 ${fill}`} />;
             })}
           </div>
         </div>

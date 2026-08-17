@@ -375,7 +375,6 @@ function MusicLog() {
   };
   const types = ['Practice', 'Song', 'Composition', 'Recording', 'Music Theory', 'Listening', 'Production', 'Mixing', 'Performance', 'Idea', 'Other'];
   return <section className="mt-14 border-t border-border/50 pt-8">
-    <div className="mb-6"><h2 className="text-xl font-medium tracking-tight">My Music Log</h2><p className="mt-1 text-sm text-muted-foreground">Keep track of anything you do, discover, create, or explore in music.</p></div>
     <div className="space-y-4 rounded-2xl border border-border/50 p-5 sm:p-6">
       <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="e.g. Learning the intro to Let It Be" className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-warm" />
       <div className="grid gap-4 sm:grid-cols-3"><select value={type} onChange={(event) => setType(event.target.value)} className="rounded-xl border border-border bg-background px-4 py-3 text-sm">{types.map((item) => <option key={item}>{item}</option>)}</select><input type="date" value={date} onChange={(event) => setDate(event.target.value)} className="rounded-xl border border-border bg-background px-4 py-3 text-sm" /><input type="number" min="0" value={timeSpent} onChange={(event) => setTimeSpent(event.target.value)} placeholder="Time spent (min)" className="rounded-xl border border-border bg-background px-4 py-3 text-sm" /></div>

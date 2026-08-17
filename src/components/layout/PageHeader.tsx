@@ -1,4 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface PageHeaderProps {
   title: string;
@@ -12,12 +13,13 @@ export function MenuBackButton() {
 }
 
 export function PageHeader({ title, description, action, showBack = true }: PageHeaderProps) {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7 sm:mb-10 lg:mb-12">
       <div className="flex items-start gap-4">
         {showBack && <div className="mt-1"><MenuBackButton /></div>}
         <div>
-        <h1 className="text-3xl sm:text-4xl display-heading tracking-tight">{title}</h1>
+        <button type="button" onClick={() => navigate('/')} className="text-left text-3xl sm:text-4xl display-heading tracking-tight transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warm rounded-sm">{title}</button>
         {description && (
           <p className="text-base text-muted-foreground mt-2 font-sans">{description}</p>
         )}

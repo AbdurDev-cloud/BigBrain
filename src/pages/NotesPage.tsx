@@ -6,6 +6,7 @@ import { useNotes, useNoteCategories, addNote, updateNote, deleteNote } from '@/
 import { renderMarkdown } from '@/lib/markdown';
 import { Trash2, Plus } from 'lucide-react';
 import { MenuBackButton } from '@/components/layout/PageHeader';
+import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,7 @@ import {
 const DEFAULT_CATEGORIES = ['Java', 'DSA', 'SQL', 'React', 'Health', 'Career', 'Interview Notes'];
 
 export function NotesPage() {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [activeNoteId, setActiveNoteId] = useState<number | null>(null);
   
@@ -107,7 +109,7 @@ export function NotesPage() {
       {/* Left Sidebar */}
       <div className="w-full lg:w-64 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r pb-4 lg:pb-0 lg:pr-4">
         <div className="mb-6 flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Notes</h2>
+          <button type="button" onClick={() => navigate('/')} className="text-left text-xl font-semibold transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warm rounded-sm">Notes</button>
           <Button variant="ghost" size="icon" onClick={handleNewNote}>
             <Plus className="h-4 w-4" />
           </Button>

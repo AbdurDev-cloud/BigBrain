@@ -6,6 +6,7 @@ import { useJournalEntries, saveJournalEntry, deleteJournalEntry } from '@/db/ho
 import { renderMarkdown } from '@/lib/markdown';
 import { Trash2 } from 'lucide-react';
 import { MenuBackButton } from '@/components/layout/PageHeader';
+import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 
 export function JournalPage() {
+  const navigate = useNavigate();
   const entries = useJournalEntries();
   const today = new Date().toISOString().slice(0, 10);
   
@@ -100,7 +102,7 @@ export function JournalPage() {
       <div className="w-full lg:w-64 shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r pb-4 lg:pb-0 lg:pr-4">
         <div className="mb-6 flex justify-between items-center">
           <MenuBackButton />
-          <h2 className="text-xl font-semibold">Journal</h2>
+          <button type="button" onClick={() => navigate('/')} className="text-left text-xl font-semibold transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warm rounded-sm">Journal</button>
           <Button variant="outline" size="sm" onClick={handleNewEntry}>
             Today
           </Button>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { MenuBackButton } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
@@ -88,12 +89,12 @@ export function GuitarPage() {
   // Level selection (first visit)
   // ---------------------------------------------------------------------------
   if (progress === null) {
-    if (showMusicLog) return <MusicLogPage onBack={() => setShowMusicLog(false)} />;
+    if (showMusicLog) return <MusicLogPage />;
     return <LevelSelection onBack={() => window.dispatchEvent(new Event('bigbrain:open-menu'))} onOpenLog={async () => { await new Promise((resolve) => setTimeout(resolve, 400)); setShowMusicLog(true); }} />;
   }
 
   if (isChoosingLevel) {
-    if (showMusicLog) return <MusicLogPage onBack={() => setShowMusicLog(false)} />;
+    if (showMusicLog) return <MusicLogPage />;
     return <LevelSelection
       onBack={() => setIsChoosingLevel(false)}
       onOpenLog={async () => { await new Promise((resolve) => setTimeout(resolve, 400)); setShowMusicLog(true); }}
@@ -141,7 +142,7 @@ export function GuitarPage() {
         description={`${progressPercent}% complete`}
         action={
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => setIsChoosingLevel(true)} className="text-muted-foreground hover:text-foreground">← Back</Button>
+            <Button variant="ghost" size="sm" onClick={() => window.dispatchEvent(new Event('bigbrain:open-menu'))} className="text-muted-foreground hover:text-foreground">← Back</Button>
             <Button variant="ghost" size="sm" onClick={() => setIsChoosingLevel(true)} className="text-muted-foreground hover:text-foreground">
               Change path
             </Button>
@@ -300,6 +301,7 @@ export function GuitarPage() {
 // ---------------------------------------------------------------------------
 
 function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; onSelect?: (level: GuitarLevel) => Promise<void>; onOpenLog: () => Promise<void> }) {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState<GuitarLevel | null>(null);
   const [selectedLog, setSelectedLog] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -327,7 +329,7 @@ function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; o
       <div className="flex items-center gap-4 mb-10">
         <div onClick={onBack}><MenuBackButton /></div>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-foreground/80">Where are you starting?</h1>
+          <button type="button" onClick={() => navigate('/')} className="text-left text-2xl sm:text-3xl font-medium tracking-tight text-foreground/80 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warm rounded-sm">Where are you starting?</button>
         </div>
       </div>
 
@@ -386,6 +388,6 @@ function MusicLog() {
   </section>;
 }
 
-function MusicLogPage({ onBack }: { onBack: () => void }) {
-  return <div key="music-log-page" className="page-transition max-w-3xl mx-auto pb-20"><PageHeader title="My Music Log" description="Keep track of anything you do, discover, create, or explore in music." action={<Button variant="ghost" size="sm" onClick={onBack}>← Back</Button>} /><MusicLog /></div>;
+function MusicLogPage() {
+  return <div key="music-log-page" className="page-transition max-w-3xl mx-auto pb-20"><PageHeader title="My Music Log" description="Keep track of anything you do, discover, create, or explore in music." /><MusicLog /></div>;
 }

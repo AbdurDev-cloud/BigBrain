@@ -72,6 +72,7 @@ const LEVEL_OPTIONS: { level: GuitarLevel; label: string }[] = [
 export function GuitarPage() {
   const progress = useGuitarProgress();
   const [isChoosingLevel, setIsChoosingLevel] = useState(false);
+  const [showMusicLog, setShowMusicLog] = useState(false);
   const [expandedStage, setExpandedStage] = useState<number | null>(null);
 
   // Loading state
@@ -87,12 +88,15 @@ export function GuitarPage() {
   // Level selection (first visit)
   // ---------------------------------------------------------------------------
   if (progress === null) {
-    return <LevelSelection onBack={() => window.dispatchEvent(new Event('bigbrain:open-menu'))} />;
+    if (showMusicLog) return <MusicLogPage onBack={() => setShowMusicLog(false)} />;
+    return <LevelSelection onBack={() => window.dispatchEvent(new Event('bigbrain:open-menu'))} onOpenLog={() => setShowMusicLog(true)} />;
   }
 
   if (isChoosingLevel) {
+    if (showMusicLog) return <MusicLogPage onBack={() => setShowMusicLog(false)} />;
     return <LevelSelection
       onBack={() => setIsChoosingLevel(false)}
+      onOpenLog={() => setShowMusicLog(true)}
       onSelect={async (level) => {
         await saveGuitarProgress(level, progress.completedItems);
         setIsChoosingLevel(false);
@@ -294,7 +298,7 @@ export function GuitarPage() {
 // Level Selection Screen
 // ---------------------------------------------------------------------------
 
-function LevelSelection({ onBack, onSelect }: { onBack: () => void; onSelect?: (level: GuitarLevel) => Promise<void> }) {
+function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; onSelect?: (level: GuitarLevel) => Promise<void>; onOpenLog: () => void }) {
   const [selected, setSelected] = useState<GuitarLevel | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -338,6 +342,10 @@ function LevelSelection({ onBack, onSelect }: { onBack: () => void; onSelect?: (
               <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">{opt.label}</span></span>
             </button>
           ))}
+          <button type="button" onClick={onOpenLog} className="guitar-level-option group flex w-full items-center gap-5 rounded-2xl px-5 py-5 text-left text-muted-foreground transition-all duration-300 hover:bg-muted/50 hover:text-foreground" style={{ animationDelay: '270ms' }}>
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-muted-foreground/25 font-mono text-sm font-bold group-hover:border-warm/60">04</span>
+            <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">My Music Log</span></span>
+          </button>
       </div>
       <MusicLog />
       </div>
@@ -358,4 +366,8 @@ function MusicLog() {
     <div className="flex gap-2"><input value={logText} onChange={(event) => setLogText(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void handleAddLog(); }} placeholder="What did you practice or learn?" className="min-w-0 flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-warm" /><Button type="button" onClick={() => void handleAddLog()} disabled={!logText.trim()}><Plus className="mr-1.5 h-4 w-4" />Add</Button></div>
     {logs && logs.length > 0 && <div className="mt-5 space-y-2">{logs.map((log) => <div key={log.id} className="flex items-center gap-3 rounded-xl bg-muted/30 px-4 py-3"><div className="min-w-0 flex-1"><p className="text-sm">{log.text}</p><p className="mt-1 text-xs font-mono text-muted-foreground/60">{log.date}</p></div><button type="button" onClick={() => void deleteGuitarLog(log.id)} aria-label="Delete log" className="rounded-lg p-2 text-muted-foreground/50 transition-colors hover:bg-destructive/10 hover:text-destructive"><Trash2 className="h-4 w-4" /></button></div>)}</div>}
   </section>;
+}
+
+function MusicLogPage({ onBack }: { onBack: () => void }) {
+  return <div className="max-w-3xl mx-auto pb-20"><PageHeader title="My Music Log" description="Record anything you practice or learn" action={<Button variant="ghost" size="sm" onClick={onBack}>Back</Button>} /><MusicLog /></div>;
 }

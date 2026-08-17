@@ -71,6 +71,7 @@ const LEVEL_OPTIONS: { level: GuitarLevel; label: string }[] = [
 
 export function GuitarPage() {
   const progress = useGuitarProgress();
+  const [isChoosingLevel, setIsChoosingLevel] = useState(false);
   const [expandedStage, setExpandedStage] = useState<number | null>(null);
 
   // Loading state
@@ -87,6 +88,16 @@ export function GuitarPage() {
   // ---------------------------------------------------------------------------
   if (progress === null) {
     return <LevelSelection onBack={() => window.dispatchEvent(new Event('bigbrain:open-menu'))} />;
+  }
+
+  if (isChoosingLevel) {
+    return <LevelSelection
+      onBack={() => setIsChoosingLevel(false)}
+      onSelect={async (level) => {
+        await saveGuitarProgress(level, progress.completedItems);
+        setIsChoosingLevel(false);
+      }}
+    />;
   }
 
   // ---------------------------------------------------------------------------
@@ -124,10 +135,15 @@ export function GuitarPage() {
         title="Learn Guitar"
         description={`${progressPercent}% complete`}
         action={
-          <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground hover:text-destructive">
-            <RotateCcw className="h-4 w-4 mr-1.5" />
-            Start Over
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={() => setIsChoosingLevel(true)} className="text-muted-foreground hover:text-foreground">
+              Change path
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground hover:text-destructive">
+              <RotateCcw className="h-4 w-4 mr-1.5" />
+              Start Over
+            </Button>
+          </div>
         }
       />
 
@@ -276,7 +292,7 @@ export function GuitarPage() {
 // Level Selection Screen
 // ---------------------------------------------------------------------------
 
-function LevelSelection({ onBack }: { onBack: () => void }) {
+function LevelSelection({ onBack, onSelect }: { onBack: () => void; onSelect?: (level: GuitarLevel) => Promise<void> }) {
   const [selected, setSelected] = useState<GuitarLevel | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -287,7 +303,8 @@ function LevelSelection({ onBack }: { onBack: () => void }) {
 
     // Brief delay for visual feedback
     await new Promise((r) => setTimeout(r, 400));
-    await saveGuitarProgress(level);
+    if (onSelect) await onSelect(level);
+    else await saveGuitarProgress(level);
   };
 
   return (

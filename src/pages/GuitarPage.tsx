@@ -71,8 +71,6 @@ const LEVEL_OPTIONS: { level: GuitarLevel; label: string }[] = [
 
 export function GuitarPage() {
   const progress = useGuitarProgress();
-  const logs = useGuitarLogs();
-  const [logText, setLogText] = useState('');
   const [isChoosingLevel, setIsChoosingLevel] = useState(false);
   const [expandedStage, setExpandedStage] = useState<number | null>(null);
 
@@ -131,12 +129,6 @@ export function GuitarPage() {
     await resetGuitarProgress();
   };
 
-  const handleAddLog = async () => {
-    const text = logText.trim();
-    if (!text) return;
-    await addGuitarLog(text);
-    setLogText('');
-  };
 
   return (
     <div className="max-w-3xl mx-auto pb-20">
@@ -294,17 +286,6 @@ export function GuitarPage() {
         })}
       </div>
 
-      <section className="mt-14 border-t border-border/50 pt-8">
-        <div className="mb-5">
-          <h2 className="text-xl font-medium tracking-tight">My Music Log</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Keep a simple record of what you practiced or learned.</p>
-        </div>
-        <div className="flex gap-2">
-          <input value={logText} onChange={(event) => setLogText(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void handleAddLog(); }} placeholder="What did you practice or learn?" className="min-w-0 flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-warm" />
-          <Button type="button" onClick={() => void handleAddLog()} disabled={!logText.trim()}><Plus className="mr-1.5 h-4 w-4" />Add</Button>
-        </div>
-        {logs && logs.length > 0 && <div className="mt-5 space-y-2">{logs.map((log) => <div key={log.id} className="flex items-center gap-3 rounded-xl bg-muted/30 px-4 py-3"><div className="min-w-0 flex-1"><p className="text-sm">{log.text}</p><p className="mt-1 text-xs font-mono text-muted-foreground/60">{log.date}</p></div><button type="button" onClick={() => void deleteGuitarLog(log.id)} aria-label="Delete log" className="rounded-lg p-2 text-muted-foreground/50 transition-colors hover:bg-destructive/10 hover:text-destructive"><Trash2 className="h-4 w-4" /></button></div>)}</div>}
-      </section>
     </div>
   );
 }
@@ -358,6 +339,23 @@ function LevelSelection({ onBack, onSelect }: { onBack: () => void; onSelect?: (
             </button>
           ))}
       </div>
+      <MusicLog />
       </div>
   );
+}
+
+function MusicLog() {
+  const logs = useGuitarLogs();
+  const [logText, setLogText] = useState('');
+  const handleAddLog = async () => {
+    const text = logText.trim();
+    if (!text) return;
+    await addGuitarLog(text);
+    setLogText('');
+  };
+  return <section className="mt-14 border-t border-border/50 pt-8">
+    <div className="mb-5"><h2 className="text-xl font-medium tracking-tight">My Music Log</h2><p className="mt-1 text-sm text-muted-foreground">Record guitar, songs, theory, or anything else you learn.</p></div>
+    <div className="flex gap-2"><input value={logText} onChange={(event) => setLogText(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void handleAddLog(); }} placeholder="What did you practice or learn?" className="min-w-0 flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-warm" /><Button type="button" onClick={() => void handleAddLog()} disabled={!logText.trim()}><Plus className="mr-1.5 h-4 w-4" />Add</Button></div>
+    {logs && logs.length > 0 && <div className="mt-5 space-y-2">{logs.map((log) => <div key={log.id} className="flex items-center gap-3 rounded-xl bg-muted/30 px-4 py-3"><div className="min-w-0 flex-1"><p className="text-sm">{log.text}</p><p className="mt-1 text-xs font-mono text-muted-foreground/60">{log.date}</p></div><button type="button" onClick={() => void deleteGuitarLog(log.id)} aria-label="Delete log" className="rounded-lg p-2 text-muted-foreground/50 transition-colors hover:bg-destructive/10 hover:text-destructive"><Trash2 className="h-4 w-4" /></button></div>)}</div>}
+  </section>;
 }

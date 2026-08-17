@@ -301,6 +301,7 @@ export function GuitarPage() {
 
 function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; onSelect?: (level: GuitarLevel) => Promise<void>; onOpenLog: () => Promise<void> }) {
   const [selected, setSelected] = useState<GuitarLevel | null>(null);
+  const [selectedLog, setSelectedLog] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleSelect = async (level: GuitarLevel) => {
@@ -316,6 +317,7 @@ function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; o
 
   const handleOpenLog = async () => {
     if (isAnimating) return;
+    setSelectedLog(true);
     setIsAnimating(true);
     await onOpenLog();
   };
@@ -349,8 +351,8 @@ function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; o
               <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">{opt.label}</span></span>
             </button>
           ))}
-          <button type="button" onClick={() => void handleOpenLog()} disabled={isAnimating} className={`guitar-level-option group flex w-full items-center gap-5 rounded-2xl px-5 py-5 text-left text-muted-foreground transition-all duration-300 hover:bg-muted/50 hover:text-foreground ${isAnimating ? 'opacity-40' : ''}`} style={{ animationDelay: '270ms' }}>
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-muted-foreground/25 font-mono text-sm font-bold group-hover:border-warm/60">04</span>
+          <button type="button" onClick={() => void handleOpenLog()} disabled={isAnimating} className={`guitar-level-option group flex w-full items-center gap-5 rounded-2xl px-5 py-5 text-left transition-all duration-300 hover:bg-muted/50 ${selectedLog ? 'bg-warm/10 text-foreground shadow-sm' : 'text-muted-foreground'} ${isAnimating && !selectedLog ? 'opacity-40' : ''}`} style={{ animationDelay: '270ms' }}>
+            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 font-mono text-sm font-bold transition-colors ${selectedLog ? 'border-warm bg-warm text-white' : 'border-muted-foreground/25 group-hover:border-warm/60'}`}>04</span>
             <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">My Music Log</span></span>
           </button>
       </div>

@@ -142,7 +142,7 @@ export function GuitarPage() {
         description={`${progressPercent}% complete`}
         action={
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => window.dispatchEvent(new Event('bigbrain:open-menu'))} className="text-muted-foreground hover:text-foreground">← Back</Button>
+            <Button variant="ghost" size="sm" onClick={() => setIsChoosingLevel(true)} className="text-muted-foreground hover:text-foreground">← Back</Button>
             <Button variant="ghost" size="sm" onClick={() => setIsChoosingLevel(true)} className="text-muted-foreground hover:text-foreground">
               Change path
             </Button>

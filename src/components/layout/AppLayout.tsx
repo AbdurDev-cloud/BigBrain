@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Download, Menu } from 'lucide-react';
@@ -11,6 +11,8 @@ interface BeforeInstallPromptEvent extends Event {
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
 
@@ -30,6 +32,12 @@ export function AppLayout() {
     };
   }, []);
 
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = window.setTimeout(() => setIsLoading(false), 420);
+    return () => window.clearTimeout(timer);
+  }, [location.pathname]);
+
   const handleInstall = async () => {
     if (installPrompt) {
       await installPrompt.prompt();
@@ -43,6 +51,17 @@ export function AppLayout() {
 
   return (
     <div className="min-h-screen bg-background">
+      {isLoading && (
+        <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center bg-background/75 backdrop-blur-[2px]" aria-live="polite" aria-label="Loading BigBrain">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-warm/30 bg-background shadow-[0_0_0_8px_hsl(var(--warm)/0.08)]">
+              <span className="absolute h-2.5 w-2.5 rounded-full bg-warm shadow-[0_0_18px_hsl(var(--warm)/0.8)]" />
+              <span className="h-11 w-11 rounded-full border border-dashed border-warm/50 animate-spin" />
+            </div>
+            <span className="font-mono text-[11px] tracking-[0.28em] text-muted-foreground/70">TUNING YOUR FOCUS</span>
+          </div>
+        </div>
+      )}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Top bar with hamburger */}

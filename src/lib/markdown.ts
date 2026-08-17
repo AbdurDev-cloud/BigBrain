@@ -38,7 +38,11 @@ function processInline(text: string): string {
   // Links: [text](url)
   text = text.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2" rel="noopener noreferrer">$1</a>',
+    (_match, label: string, rawUrl: string) => {
+      const url = rawUrl.trim();
+      const safeUrl = /^(https?:\/\/|mailto:)/i.test(url) ? url : '#';
+      return `<a href="${escapeHtml(safeUrl)}" rel="noopener noreferrer"${safeUrl !== '#' ? ' target="_blank"' : ''}>${label}</a>`;
+    },
   );
 
   // Bold: **text** or __text__  (process before italic)

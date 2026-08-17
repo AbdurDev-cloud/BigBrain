@@ -73,8 +73,13 @@ export async function restoreBackupFromFile(file: File) {
   const text = await file.text();
   const parsed = JSON.parse(text) as BigBrainBackup;
 
-  if (!parsed?.data || typeof parsed.version !== 'number') {
+  if (!parsed?.data || typeof parsed.version !== 'number' || typeof parsed.exportedAt !== 'string') {
     throw new Error('Invalid backup file.');
+  }
+
+  const isArray = (value: unknown): value is unknown[] => Array.isArray(value);
+  if (!isArray(parsed.data.studySessions) || !isArray(parsed.data.journalEntries) || !isArray(parsed.data.notes) || !isArray(parsed.data.projects) || !isArray(parsed.data.healthLogs) || !isArray(parsed.data.habits) || (parsed.data.guitarProgress !== undefined && !isArray(parsed.data.guitarProgress)) || (parsed.data.guitarLogs !== undefined && !isArray(parsed.data.guitarLogs))) {
+    throw new Error('Invalid backup data.');
   }
 
   const studySessions = reviveDates(parsed.data.studySessions || [], ['createdAt']);

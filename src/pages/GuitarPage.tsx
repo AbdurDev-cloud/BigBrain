@@ -348,7 +348,6 @@ function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; o
             <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">My Music Log</span></span>
           </button>
       </div>
-      <MusicLog />
       </div>
   );
 }

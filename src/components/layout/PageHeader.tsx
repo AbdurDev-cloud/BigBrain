@@ -9,7 +9,7 @@ interface PageHeaderProps {
 }
 
 export function MenuBackButton() {
-  return <button type="button" onClick={() => window.dispatchEvent(new Event('bigbrain:open-menu'))} aria-label="Open menu" title="Open menu" className="group inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-border/50 bg-background/70 text-muted-foreground shadow-sm transition-all duration-200 hover:border-warm/40 hover:bg-warm/10 hover:text-foreground hover:shadow-[0_0_0_4px_hsl(var(--warm)/0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warm"><ArrowLeft className="h-5 w-5 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={2} /></button>;
+  return <button type="button" onClick={(event) => { event.preventDefault(); event.stopPropagation(); window.dispatchEvent(new Event('bigbrain:open-menu')); }} aria-label="Open menu" title="Open menu" className="group inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-2xl border border-border/50 bg-background/70 px-3 text-muted-foreground shadow-sm transition-all duration-200 hover:border-warm/40 hover:bg-warm/10 hover:text-foreground hover:shadow-[0_0_0_4px_hsl(var(--warm)/0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-warm"><ArrowLeft className="h-5 w-5 transition-transform duration-200 group-hover:-translate-x-0.5" strokeWidth={2} /><span className="text-sm font-medium">Menu</span></button>;
 }
 
 export function PageHeader({ title, description, action, showBack = true }: PageHeaderProps) {

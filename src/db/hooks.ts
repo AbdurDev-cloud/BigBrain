@@ -385,8 +385,8 @@ export function useGuitarLogs() {
   return useLiveQuery(() => db.guitarLogs.orderBy('id').reverse().toArray());
 }
 
-export async function addGuitarLog(text: string) {
-  return db.guitarLogs.add({ text, date: today(), createdAt: new Date() } as GuitarLog);
+export async function addGuitarLog(entry: Omit<GuitarLog, 'id' | 'createdAt'>) {
+  return db.guitarLogs.add({ ...entry, createdAt: new Date() } as GuitarLog);
 }
 
 export async function deleteGuitarLog(id: number) {

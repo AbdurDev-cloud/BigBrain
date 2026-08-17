@@ -141,6 +141,7 @@ export function GuitarPage() {
         description={`${progressPercent}% complete`}
         action={
           <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={() => setIsChoosingLevel(true)} className="text-muted-foreground hover:text-foreground">← Back</Button>
             <Button variant="ghost" size="sm" onClick={() => setIsChoosingLevel(true)} className="text-muted-foreground hover:text-foreground">
               Change path
             </Button>
@@ -354,20 +355,31 @@ function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; o
 
 function MusicLog() {
   const logs = useGuitarLogs();
-  const [logText, setLogText] = useState('');
+  const [title, setTitle] = useState('');
+  const [type, setType] = useState('Practice');
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [timeSpent, setTimeSpent] = useState('');
+  const [notes, setNotes] = useState('');
+  const [tags, setTags] = useState('');
   const handleAddLog = async () => {
-    const text = logText.trim();
-    if (!text) return;
-    await addGuitarLog(text);
-    setLogText('');
+    if (!title.trim()) return;
+    await addGuitarLog({ title: title.trim(), type, date, timeSpent: timeSpent ? Number(timeSpent) : undefined, notes: notes.trim() || undefined, tags: tags.split(',').map((tag) => tag.trim()).filter(Boolean) });
+    setTitle(''); setTimeSpent(''); setNotes(''); setTags(''); setDate(new Date().toISOString().slice(0, 10));
   };
+  const types = ['Practice', 'Song', 'Composition', 'Recording', 'Music Theory', 'Listening', 'Production', 'Mixing', 'Performance', 'Idea', 'Other'];
   return <section className="mt-14 border-t border-border/50 pt-8">
-    <div className="mb-5"><h2 className="text-xl font-medium tracking-tight">My Music Log</h2><p className="mt-1 text-sm text-muted-foreground">Record guitar, songs, theory, or anything else you learn.</p></div>
-    <div className="flex gap-2"><input value={logText} onChange={(event) => setLogText(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void handleAddLog(); }} placeholder="What did you practice or learn?" className="min-w-0 flex-1 rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-warm" /><Button type="button" onClick={() => void handleAddLog()} disabled={!logText.trim()}><Plus className="mr-1.5 h-4 w-4" />Add</Button></div>
-    {logs && logs.length > 0 && <div className="mt-5 space-y-2">{logs.map((log) => <div key={log.id} className="flex items-center gap-3 rounded-xl bg-muted/30 px-4 py-3"><div className="min-w-0 flex-1"><p className="text-sm">{log.text}</p><p className="mt-1 text-xs font-mono text-muted-foreground/60">{log.date}</p></div><button type="button" onClick={() => void deleteGuitarLog(log.id)} aria-label="Delete log" className="rounded-lg p-2 text-muted-foreground/50 transition-colors hover:bg-destructive/10 hover:text-destructive"><Trash2 className="h-4 w-4" /></button></div>)}</div>}
+    <div className="mb-6"><h2 className="text-xl font-medium tracking-tight">My Music Log</h2><p className="mt-1 text-sm text-muted-foreground">Keep track of anything you do, discover, create, or explore in music.</p></div>
+    <div className="space-y-4 rounded-2xl border border-border/50 p-5 sm:p-6">
+      <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="e.g. Learning the intro to Let It Be" className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-warm" />
+      <div className="grid gap-4 sm:grid-cols-3"><select value={type} onChange={(event) => setType(event.target.value)} className="rounded-xl border border-border bg-background px-4 py-3 text-sm">{types.map((item) => <option key={item}>{item}</option>)}</select><input type="date" value={date} onChange={(event) => setDate(event.target.value)} className="rounded-xl border border-border bg-background px-4 py-3 text-sm" /><input type="number" min="0" value={timeSpent} onChange={(event) => setTimeSpent(event.target.value)} placeholder="Time spent (min)" className="rounded-xl border border-border bg-background px-4 py-3 text-sm" /></div>
+      <textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Write anything you want to remember..." rows={5} className="w-full resize-y rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-warm" />
+      <input value={tags} onChange={(event) => setTags(event.target.value)} placeholder="Tags (e.g. Guitar, Songwriting, Mixing)" className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-warm" />
+      <Button type="button" onClick={() => void handleAddLog()} disabled={!title.trim()}><Plus className="mr-1.5 h-4 w-4" />Save Entry</Button>
+    </div>
+    <div className="mt-10"><h3 className="text-lg font-medium">Recent Music Logs</h3>{logs && logs.length > 0 && <div className="mt-4 space-y-3">{logs.map((log) => <div key={log.id} className="flex gap-3 rounded-xl bg-muted/30 px-4 py-4"><div className="min-w-0 flex-1"><p className="font-medium">{log.title || log.text}</p><p className="mt-1 text-xs text-muted-foreground">{log.type || 'Music'}{log.tags?.length ? ` · ${log.tags.join(', ')}` : ''}{log.timeSpent ? ` · ${log.timeSpent} min` : ''} · {log.date}</p>{log.notes && <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{log.notes}</p>}</div><button type="button" onClick={() => void deleteGuitarLog(log.id)} aria-label="Delete log" className="rounded-lg p-2 text-muted-foreground/50 hover:bg-destructive/10 hover:text-destructive"><Trash2 className="h-4 w-4" /></button></div>)}</div>}</div>
   </section>;
 }
 
 function MusicLogPage({ onBack }: { onBack: () => void }) {
-  return <div className="max-w-3xl mx-auto pb-20"><PageHeader title="My Music Log" description="Record anything you practice or learn" action={<Button variant="ghost" size="sm" onClick={onBack}>Back</Button>} /><MusicLog /></div>;
+  return <div className="max-w-3xl mx-auto pb-20"><PageHeader title="My Music Log" description="Keep track of anything you do, discover, create, or explore in music." action={<Button variant="ghost" size="sm" onClick={onBack}>← Back</Button>} /><MusicLog /></div>;
 }

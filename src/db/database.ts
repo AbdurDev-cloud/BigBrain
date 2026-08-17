@@ -87,8 +87,13 @@ export interface GuitarProgress {
 
 export interface GuitarLog {
   id: number;
-  text: string;
+  title: string;
+  type?: string;
   date: string;
+  timeSpent?: number;
+  notes?: string;
+  tags?: string[];
+  text?: string;
   createdAt: Date;
 }
 

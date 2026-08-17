@@ -89,14 +89,14 @@ export function GuitarPage() {
   // ---------------------------------------------------------------------------
   if (progress === null) {
     if (showMusicLog) return <MusicLogPage onBack={() => setShowMusicLog(false)} />;
-    return <LevelSelection onBack={() => window.dispatchEvent(new Event('bigbrain:open-menu'))} onOpenLog={() => setShowMusicLog(true)} />;
+    return <LevelSelection onBack={() => window.dispatchEvent(new Event('bigbrain:open-menu'))} onOpenLog={async () => { await new Promise((resolve) => setTimeout(resolve, 400)); setShowMusicLog(true); }} />;
   }
 
   if (isChoosingLevel) {
     if (showMusicLog) return <MusicLogPage onBack={() => setShowMusicLog(false)} />;
     return <LevelSelection
       onBack={() => setIsChoosingLevel(false)}
-      onOpenLog={() => setShowMusicLog(true)}
+      onOpenLog={async () => { await new Promise((resolve) => setTimeout(resolve, 400)); setShowMusicLog(true); }}
       onSelect={async (level) => {
         await saveGuitarProgress(level, progress.completedItems);
         setIsChoosingLevel(false);
@@ -299,7 +299,7 @@ export function GuitarPage() {
 // Level Selection Screen
 // ---------------------------------------------------------------------------
 
-function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; onSelect?: (level: GuitarLevel) => Promise<void>; onOpenLog: () => void }) {
+function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; onSelect?: (level: GuitarLevel) => Promise<void>; onOpenLog: () => Promise<void> }) {
   const [selected, setSelected] = useState<GuitarLevel | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -312,6 +312,12 @@ function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; o
     await new Promise((r) => setTimeout(r, 400));
     if (onSelect) await onSelect(level);
     else await saveGuitarProgress(level);
+  };
+
+  const handleOpenLog = async () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    await onOpenLog();
   };
 
   return (
@@ -343,7 +349,7 @@ function LevelSelection({ onBack, onSelect, onOpenLog }: { onBack: () => void; o
               <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">{opt.label}</span></span>
             </button>
           ))}
-          <button type="button" onClick={onOpenLog} className="guitar-level-option group flex w-full items-center gap-5 rounded-2xl px-5 py-5 text-left text-muted-foreground transition-all duration-300 hover:bg-muted/50 hover:text-foreground" style={{ animationDelay: '270ms' }}>
+          <button type="button" onClick={() => void handleOpenLog()} disabled={isAnimating} className={`guitar-level-option group flex w-full items-center gap-5 rounded-2xl px-5 py-5 text-left text-muted-foreground transition-all duration-300 hover:bg-muted/50 hover:text-foreground ${isAnimating ? 'opacity-40' : ''}`} style={{ animationDelay: '270ms' }}>
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-muted-foreground/25 font-mono text-sm font-bold group-hover:border-warm/60">04</span>
             <span className="min-w-0 flex-1"><span className="block text-xl sm:text-2xl font-medium text-foreground/70">My Music Log</span></span>
           </button>
@@ -380,5 +386,5 @@ function MusicLog() {
 }
 
 function MusicLogPage({ onBack }: { onBack: () => void }) {
-  return <div className="page-transition max-w-3xl mx-auto pb-20"><PageHeader title="My Music Log" description="Keep track of anything you do, discover, create, or explore in music." action={<Button variant="ghost" size="sm" onClick={onBack}>← Back</Button>} /><MusicLog /></div>;
+  return <div key="music-log-page" className="page-transition max-w-3xl mx-auto pb-20"><PageHeader title="My Music Log" description="Keep track of anything you do, discover, create, or explore in music." action={<Button variant="ghost" size="sm" onClick={onBack}>← Back</Button>} /><MusicLog /></div>;
 }

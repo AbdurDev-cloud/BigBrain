@@ -21,9 +21,9 @@
     <style>
       @keyframes boot-spin { to { transform: rotate(360deg); } }
       #boot-loader { position: fixed; inset: 0; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: #fbfaf8; color: #8d8178; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; transition: opacity .25s ease; }
-      .boot-loader-core { position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(196,149,106,.35); border-radius: 999px; box-shadow: 0 0 0 8px rgba(196,149,106,.08); }
-      .boot-loader-core i { width: 44px; height: 44px; border: 1px dashed rgba(196,149,106,.6); border-radius: 999px; animation: boot-spin 1.2s linear infinite; }
-      .boot-loader-core span { position: absolute; width: 10px; height: 10px; border-radius: 999px; background: #c4956a; box-shadow: 0 0 18px rgba(196,149,106,.85); }
+      .boot-loader-core { position: relative; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(196,149,106,.35); border-radius: 999px; box-shadow: 0 0 0 10px rgba(196,149,106,.08); }
+      .boot-loader-core i { width: 58px; height: 58px; border: 2px dashed rgba(196,149,106,.75); border-radius: 999px; animation: boot-spin 1.2s linear infinite; }
+      .boot-loader-core span { position: absolute; width: 12px; height: 12px; border-radius: 999px; background: #c4956a; box-shadow: 0 0 22px rgba(196,149,106,.9); }
       .boot-loader-label { font-size: 11px; letter-spacing: .28em; }
     </style>
     <div id="root"></div>

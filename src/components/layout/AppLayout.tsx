@@ -54,9 +54,9 @@ export function AppLayout() {
       {isLoading && (
         <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center bg-background/75 backdrop-blur-[2px]" aria-live="polite" aria-label="Loading BigBrain">
           <div className="flex flex-col items-center gap-4">
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-warm/30 bg-background shadow-[0_0_0_8px_hsl(var(--warm)/0.08)]">
-              <span className="absolute h-2.5 w-2.5 rounded-full bg-warm shadow-[0_0_18px_hsl(var(--warm)/0.8)]" />
-              <span className="h-11 w-11 rounded-full border border-dashed border-warm/50 animate-spin" />
+            <div className="relative flex h-20 w-20 items-center justify-center rounded-full border border-warm/30 bg-background shadow-[0_0_0_10px_hsl(var(--warm)/0.08)]">
+              <span className="absolute h-3 w-3 rounded-full bg-warm shadow-[0_0_22px_hsl(var(--warm)/0.85)]" />
+              <span className="h-14 w-14 rounded-full border-2 border-dashed border-warm/70 animate-spin" />
             </div>
             <span className="font-mono text-[11px] tracking-[0.28em] text-muted-foreground/70">TUNING YOUR FOCUS</span>
           </div>

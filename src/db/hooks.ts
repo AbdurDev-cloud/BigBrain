@@ -9,6 +9,7 @@ import type {
   HabitRecord,
   GuitarProgress,
   GuitarLevel,
+  GuitarLog,
 } from "./database";
 
 // ---------------------------------------------------------------------------
@@ -378,4 +379,16 @@ export async function toggleGuitarItem(itemKey: string) {
 
 export async function resetGuitarProgress() {
   return db.guitarProgress.clear();
+}
+
+export function useGuitarLogs() {
+  return useLiveQuery(() => db.guitarLogs.orderBy('createdAt').reverse().toArray());
+}
+
+export async function addGuitarLog(text: string) {
+  return db.guitarLogs.add({ text, date: today(), createdAt: new Date() } as GuitarLog);
+}
+
+export async function deleteGuitarLog(id: number) {
+  return db.guitarLogs.delete(id);
 }

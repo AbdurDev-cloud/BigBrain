@@ -7,6 +7,7 @@ import type {
   Project,
   StudySession,
   GuitarProgress,
+  GuitarLog,
 } from './database';
 
 const BACKUP_VERSION = 1;
@@ -23,6 +24,7 @@ interface BigBrainBackup {
     healthLogs: HealthLog[];
     habits: HabitRecord[];
     guitarProgress: GuitarProgress[];
+    guitarLogs: GuitarLog[];
   };
 }
 
@@ -49,6 +51,7 @@ export async function createBackupBlob() {
       healthLogs: await db.healthLogs.toArray(),
       habits: await db.habits.toArray(),
       guitarProgress: await db.guitarProgress.toArray(),
+      guitarLogs: await db.guitarLogs.toArray(),
     },
   };
 
@@ -81,10 +84,11 @@ export async function restoreBackupFromFile(file: File) {
   const healthLogs = reviveDates(parsed.data.healthLogs || [], ['createdAt']);
   const habits = parsed.data.habits || [];
   const guitarProgress = reviveDates(parsed.data.guitarProgress || [], ['createdAt', 'updatedAt']);
+  const guitarLogs = reviveDates(parsed.data.guitarLogs || [], ['createdAt']);
 
   await db.transaction(
     'rw',
-    [db.studySessions, db.journalEntries, db.notes, db.projects, db.healthLogs, db.habits, db.guitarProgress],
+    [db.studySessions, db.journalEntries, db.notes, db.projects, db.healthLogs, db.habits, db.guitarProgress, db.guitarLogs],
     async () => {
       await db.studySessions.clear();
       await db.journalEntries.clear();
@@ -92,6 +96,7 @@ export async function restoreBackupFromFile(file: File) {
       await db.projects.clear();
       await db.healthLogs.clear();
       await db.habits.clear();
+      await db.guitarLogs.clear();
 
       if (studySessions.length) await db.studySessions.bulkAdd(studySessions as StudySession[]);
       if (journalEntries.length) await db.journalEntries.bulkAdd(journalEntries as JournalEntry[]);
@@ -100,6 +105,7 @@ export async function restoreBackupFromFile(file: File) {
       if (healthLogs.length) await db.healthLogs.bulkAdd(healthLogs as HealthLog[]);
       if (habits.length) await db.habits.bulkAdd(habits as HabitRecord[]);
       if (guitarProgress.length) await db.guitarProgress.bulkAdd(guitarProgress as GuitarProgress[]);
+      if (guitarLogs.length) await db.guitarLogs.bulkAdd(guitarLogs as GuitarLog[]);
     },
   );
 

@@ -85,6 +85,13 @@ export interface GuitarProgress {
   updatedAt: Date;
 }
 
+export interface GuitarLog {
+  id: number;
+  text: string;
+  date: string;
+  createdAt: Date;
+}
+
 // ---------------------------------------------------------------------------
 // Database
 // ---------------------------------------------------------------------------
@@ -97,6 +104,7 @@ const db = new Dexie("BigBrainDB") as Dexie & {
   healthLogs: EntityTable<HealthLog, "id">;
   habits: EntityTable<HabitRecord, "id">;
   guitarProgress: EntityTable<GuitarProgress, "id">;
+  guitarLogs: EntityTable<GuitarLog, "id">;
 };
 
 db.version(1).stores({
@@ -116,6 +124,17 @@ db.version(2).stores({
   healthLogs: "++id, &date",
   habits: "++id, &date",
   guitarProgress: "++id",
+});
+
+db.version(3).stores({
+  studySessions: "++id, date, subject",
+  journalEntries: "++id, &date",
+  notes: "++id, category",
+  projects: "++id, status",
+  healthLogs: "++id, &date",
+  habits: "++id, &date",
+  guitarProgress: "++id",
+  guitarLogs: "++id, date",
 });
 
 export { db };
